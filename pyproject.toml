@@ -1,0 +1,29 @@
+[project]
+name = "de-streaming-data"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "httpx>=0.28.1",
+    "pytest-cov>=6.1.1",
+    "pytest-testdox>=3.1.0",
+    "python-dotenv>=1.1.0",
+    "respx>=0.22.0",
+    "ruff>=0.11.4",
+]
+
+[tool.ruff]
+line-length = 80
+indent-width = 4
+
+[tool.ruff.format]
+docstring-code-format = true
+docstring-code-line-length = 70
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "B"]
+
+[tool.pytest.ini_options]
+addopts = "--testdox --cov-report term-missing --cov=src/"
+filterwarnings = ["ignore::DeprecationWarning"]
