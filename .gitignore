@@ -11,6 +11,3 @@ wheels/
 
 # Enviroment Variables
 .env
-
-specification.md
-.coverage
