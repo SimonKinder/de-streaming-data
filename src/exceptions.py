@@ -11,7 +11,3 @@ class ClientRequestError(BaseException):
 
 class ServerRequestError(BaseException):
     """Exception raised for 5XX response status codes."""
-
-
-class MaxRetriesExceededError(BaseException):
-    """Exception raised when maximum retries reached."""
