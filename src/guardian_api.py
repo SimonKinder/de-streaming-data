@@ -6,15 +6,11 @@ import logging
 from dotenv import load_dotenv
 from types import FunctionType
 from functools import wraps
-from src.utils import format_results
 from src.exceptions import (
     RateLimitExceededError,
-    MaxRetriesExceededError,
     ServerRequestError,
     ClientRequestError,
 )
-from httpx import HTTPError
-from pprint import pprint
 
 # Load Enviroment Varaibles
 load_dotenv()
