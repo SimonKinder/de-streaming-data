@@ -2,10 +2,10 @@
 
 import os
 import httpx
-import logging
 from dotenv import load_dotenv
 from types import FunctionType
 from functools import wraps
+from src.utils import logger
 from src.exceptions import (
     RateLimitExceededError,
     ServerRequestError,
@@ -15,12 +15,6 @@ from src.exceptions import (
 
 # Load Enviroment Varaibles
 load_dotenv()
-
-logger = logging.getLogger(name="Guardian Search Content")
-logger.setLevel(logging.INFO)
-handler = logging.StreamHandler()
-handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
-logger.addHandler(handler)
 
 
 def raise_on_status_error(response: httpx.Response) -> None:
