@@ -5,6 +5,7 @@ from src.exceptions import (
     RateLimitExceededError,
     ServerRequestError,
     ClientRequestError,
+    APIError
 )
 from src.guardian_api import raise_on_status_error, retry, get_articles
 from types import FunctionType
@@ -88,7 +89,7 @@ class TestRetryDecorator:
             test_func()
         assert call_count == 3
 
-    @pytest.mark.parametrize("exception", [ClientRequestError, ValueError])
+    @pytest.mark.parametrize("exception", [ClientRequestError, APIError])
     @pytest.mark.it(
         "Confirm non retriable exceptions are re-raised after 1 attempt"
     )

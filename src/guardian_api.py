@@ -10,12 +10,17 @@ from src.exceptions import (
     RateLimitExceededError,
     ServerRequestError,
     ClientRequestError,
+    APIError
 )
 
 # Load Enviroment Varaibles
 load_dotenv()
 
-logger = logging.Logger(name="Guardian Search Content", level=logging.INFO)
+logger = logging.getLogger(name="Guardian Search Content")
+logger.setLevel(logging.INFO)
+handler = logging.StreamHandler()
+handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
+logger.addHandler(handler)
 
 
 def raise_on_status_error(response: httpx.Response) -> None:
@@ -67,22 +72,22 @@ def retry(func: FunctionType) -> FunctionType:
             except (ServerRequestError, RateLimitExceededError) as retry_exc:
                 retries += 1
                 if retries >= max_retries:
-                    logger.error("Max retries reached: %s", retry_exc)
+                    logger.error("Max retries reached: %s", str(retry_exc))
                     raise
                 logger.warning(
                     "Retry %(retries)s/%(max_retries)s failed: %(exc)s",
                     {
                         "retries": retries,
                         "max_retries": max_retries,
-                        "exc": retry_exc,
+                        "exc": str(retry_exc),
                     },
                 )
             except ClientRequestError as c_exc:
-                logger.error("Client error: %s", c_exc)
+                logger.error("Client error: %s", str(c_exc))
                 raise
             except Exception as exc:
-                logger.error("Unexpected error: %s", exc)
-                raise
+                logger.error("Unexpected error: %s", str(exc))
+                raise APIError(f"Unexpected error: {str(exc)}") from None
 
     return request_wrapper
 
@@ -123,5 +128,10 @@ def get_articles(
     response = client.get(url=url, params=params)
     response.raise_for_status()
     if response.json()["response"]["total"] == 0:
+        logger.warning("No articles found mentioning %s")
         return None
-    return response.json()["response"]["results"]
+    search_results = response.json()["response"]["results"]
+    logger.info("Successfully retrieved %(amount)s latest articles mentioning %(query)s",
+                {"amount": len(search_results),
+                 "query": query})
+    return search_results
