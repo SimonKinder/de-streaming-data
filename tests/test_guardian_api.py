@@ -89,22 +89,39 @@ class TestRetryDecorator:
             test_func()
         assert call_count == 3
 
-    @pytest.mark.parametrize("exception", [ClientRequestError, APIError])
     @pytest.mark.it(
-        "Confirm non retriable exceptions are re-raised after 1 attempt"
+        "Confirm a ClientRequestError is re-raised after 1 attempt"
     )
-    def test_non_retriable(self, exception):
+    def test_client_error(self):
         call_count = 0
 
         @retry
         def test_func():
             nonlocal call_count
             call_count += 1
-            raise exception
+            raise ClientRequestError
 
-        with pytest.raises(exception):
+        with pytest.raises(ClientRequestError):
             test_func()
         assert call_count == 1
+    
+
+    @pytest.mark.it(
+        "Confirm a unhandled errors are re-raised as a APIError after 1 attempt"
+    )
+    def test_unhandled_error(self):
+        call_count = 0
+
+        @retry
+        def test_func():
+            nonlocal call_count
+            call_count += 1
+            raise ValueError
+
+        with pytest.raises(APIError):
+            test_func()
+        assert call_count == 1
+
 
     @pytest.mark.it(
         "Confirm the correct data is returned for a succesful request"
@@ -118,11 +135,6 @@ class TestRetryDecorator:
 
 
 class TestGetArticles:
-    """
-    Tests:
-    - data is correct
-    """
-
     @respx.mock
     @pytest.mark.it("Confirm None is returned if no results are present")
     def test_zero_results(self):
