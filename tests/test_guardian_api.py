@@ -5,7 +5,7 @@ from src.exceptions import (
     RateLimitExceededError,
     ServerRequestError,
     ClientRequestError,
-    APIError
+    APIError,
 )
 from src.guardian_api import raise_on_status_error, retry, get_articles
 from types import FunctionType
@@ -89,9 +89,7 @@ class TestRetryDecorator:
             test_func()
         assert call_count == 3
 
-    @pytest.mark.it(
-        "Confirm a ClientRequestError is re-raised after 1 attempt"
-    )
+    @pytest.mark.it("Confirm a ClientRequestError is re-raised after 1 attempt")
     def test_client_error(self):
         call_count = 0
 
@@ -104,7 +102,6 @@ class TestRetryDecorator:
         with pytest.raises(ClientRequestError):
             test_func()
         assert call_count == 1
-    
 
     @pytest.mark.it(
         "Confirm a unhandled errors are re-raised as a APIError after 1 attempt"
@@ -121,7 +118,6 @@ class TestRetryDecorator:
         with pytest.raises(APIError):
             test_func()
         assert call_count == 1
-
 
     @pytest.mark.it(
         "Confirm the correct data is returned for a succesful request"
