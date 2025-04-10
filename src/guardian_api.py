@@ -10,7 +10,7 @@ from src.exceptions import (
     RateLimitExceededError,
     ServerRequestError,
     ClientRequestError,
-    APIError
+    APIError,
 )
 
 # Load Enviroment Varaibles
@@ -42,7 +42,7 @@ def raise_on_status_error(response: httpx.Response) -> None:
         )
 
 
-def retry(func: FunctionType) -> FunctionType:
+def retry_guardian_api(func: FunctionType) -> FunctionType:
     """Decorator to attempt retries and handle exceptions.
 
     Args:
@@ -57,6 +57,17 @@ def retry(func: FunctionType) -> FunctionType:
 
     @wraps(func)
     def request_wrapper(**kwargs) -> list[dict]:
+        """Wrapper function to handle retries and exceptions.
+
+        Args:
+            **kwargs: Arguments to pass to the function.
+
+        Raises:
+            APIError: Raised when an unexpected error occurs.
+
+        Returns:
+            list[dict]: Search results from the Guardian API.
+        """
         retries = 0
         max_retries = 3
         while retries < max_retries:
@@ -86,11 +97,11 @@ def retry(func: FunctionType) -> FunctionType:
     return request_wrapper
 
 
-@retry
+@retry_guardian_api
 def get_articles(
     query: str, client: httpx.Client, from_date: str | None = None
 ) -> list[dict]:
-    """Retreive maximum 10 newest Guardian articles referencing query.
+    """Retreive newest Guardian articles referencing query, maximum 10.
 
     Args:
         query (str): Terms to search for.
@@ -98,12 +109,7 @@ def get_articles(
         from_date (str | None): Date to search from YYYY-MM-DD format. Defaults to None.
 
     Returns:
-        list[dict]: Formatted list of search results containing:
-            - content_preview: Preview of article content
-            - keywords: Article keywords/tags
-            - webPublicationDate: Publication date
-            - webTitle: Article title
-            - webUrl: URL to the article
+        list[dict]: List of Guardian articles matching the search query.
     """
 
     url = "https://content.guardianapis.com/search"
@@ -122,10 +128,11 @@ def get_articles(
     response = client.get(url=url, params=params)
     response.raise_for_status()
     if response.json()["response"]["total"] == 0:
-        logger.warning("No articles found mentioning %s")
+        logger.warning("No articles found mentioning %s", query)
         return None
     search_results = response.json()["response"]["results"]
-    logger.info("Successfully retrieved %(amount)s latest articles mentioning %(query)s",
-                {"amount": len(search_results),
-                 "query": query})
+    logger.info(
+        "Successfully retrieved %(amount)s latest articles mentioning %(query)s",
+        {"amount": len(search_results), "query": query},
+    )
     return search_results

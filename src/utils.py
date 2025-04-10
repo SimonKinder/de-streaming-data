@@ -17,7 +17,19 @@ logger.addHandler(handler)
 
 
 def format_results(search_results: list[dict]) -> list[dict]:
-    """Format the Guardian search content, keeping only information required."""
+    """Format the Guardian search content, keeping only information required.
+
+    Args:
+        search_results (list[dict]): List of dictionaries containing the search results
+        from Guardian API
+
+    Raises:
+        KeyError: Error raised when the search results do not contain the expected keys
+        or when the format of the search results is incorrect.
+
+    Returns:
+        list[dict]: List of dictionaries containing the formatted search results
+    """
 
     try:
         keys_required = ["webPublicationDate", "webTitle", "webUrl"]
@@ -45,6 +57,16 @@ def format_results(search_results: list[dict]) -> list[dict]:
 
 
 def update_message_retention(queue_url: str, sqs_client: boto3.client) -> None:
+    """Update SQS queue message retention period to 3 days (259200 seconds).
+
+    Args:
+        queue_url (str): AWS SQS queue URL
+        sqs_client (boto3.client): Boto3 SQS client
+
+    Raises:
+        ClientError: Error raised when Boto3 encounters an client issue
+        BotocoreError: Error raised when function encounters an unexpected issue
+    """
     try:
         queue_attributes = sqs_client.get_queue_attributes(
             QueueUrl=queue_url, AttributeNames=["MessageRetentionPeriod"]
@@ -81,7 +103,23 @@ def send_queue_message(
     message_id: str,
     message_body: list[dict],
     sqs_client: boto3.client,
-) -> None:
+) -> str:
+    """Send a message to the SQS queue.
+
+    Args:
+        queue_url (str): AWS SQS queue URL
+        message_id (str): Message ID to be used as a message attribute
+        message_body (list[dict]): List of dictionaries containing search results
+        from Guardian API
+        sqs_client (boto3.client): Boto3 SQS client
+
+    Raises:
+        ClientError: Error raised when Boto3 encounters an client issue
+        BotocoreError: Error raised when function encounters an unexpected issue
+
+    Returns:
+        str: Message ID of the sent message
+    """
     queue_name = queue_url.split("/")[-1]
     try:
         response = sqs_client.send_message(
@@ -92,7 +130,7 @@ def send_queue_message(
             },
         )
         logger.info(
-            "Succesfully sent message to %(queue_name)s - Message ID: %(id)s",
+            "Successfully sent message to %(queue_name)s - Message ID: %(id)s",
             {
                 "queue_name": queue_name,
                 "id": response["MessageId"],

@@ -1,7 +1,7 @@
 [project]
 name = "de-streaming-data"
 version = "0.1.0"
-description = "Add your description here"
+description = "Lambda function to retrieve guardian articles containing query"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [

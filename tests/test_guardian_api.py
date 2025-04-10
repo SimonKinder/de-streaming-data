@@ -7,7 +7,11 @@ from src.exceptions import (
     ClientRequestError,
     APIError,
 )
-from src.guardian_api import raise_on_status_error, retry, get_articles
+from src.guardian_api import (
+    raise_on_status_error,
+    retry_guardian_api,
+    get_articles,
+)
 from types import FunctionType
 
 
@@ -55,14 +59,14 @@ class TestRetryDecorator:
         def test_func():
             pass
 
-        result = retry(test_func)
+        result = retry_guardian_api(test_func)
         assert isinstance(result, FunctionType)
 
     @pytest.mark.it("Confirm the decorated function is called")
     def test_function_called(self):
         is_called = False
 
-        @retry
+        @retry_guardian_api
         def test_func():
             nonlocal is_called
             is_called = True
@@ -79,7 +83,7 @@ class TestRetryDecorator:
     def test_max_retries(self, exception):
         call_count = 0
 
-        @retry
+        @retry_guardian_api
         def test_func():
             nonlocal call_count
             call_count += 1
@@ -93,7 +97,7 @@ class TestRetryDecorator:
     def test_client_error(self):
         call_count = 0
 
-        @retry
+        @retry_guardian_api
         def test_func():
             nonlocal call_count
             call_count += 1
@@ -109,7 +113,7 @@ class TestRetryDecorator:
     def test_unhandled_error(self):
         call_count = 0
 
-        @retry
+        @retry_guardian_api
         def test_func():
             nonlocal call_count
             call_count += 1
@@ -123,7 +127,7 @@ class TestRetryDecorator:
         "Confirm the correct data is returned for a succesful request"
     )
     def test_succesful_request(self):
-        @retry
+        @retry_guardian_api
         def test_func():
             return [1, 2, 3]
 
