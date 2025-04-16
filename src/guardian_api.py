@@ -113,7 +113,7 @@ def get_articles(
     """
 
     url = "https://content.guardianapis.com/search"
-    api_key = os.getenv("GUARDIAN-API-KEY")
+    api_key = os.getenv("GUARDIAN_API_KEY")
     params = {
         "api-key": api_key,
         "q": query,

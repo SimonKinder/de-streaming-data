@@ -46,9 +46,8 @@ cd de-streaming-data
 2. Set up your environment variables:
 
 ```bash
-cp .env.example .env
-# Add your Guardian API key to .env:
-# GUARDIAN-API-KEY=your-api-key-here
+touch .env
+echo "GUARDIAN_API_KEY=insert-api-key" >> .env
 ```
 
 3. Test the project
