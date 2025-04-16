@@ -20,3 +20,4 @@ terraform/terraform.tfvars
 packages
 *tfstate*
 .terraform.lock*
+.terraform
