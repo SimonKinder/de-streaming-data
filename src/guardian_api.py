@@ -5,13 +5,23 @@ import httpx
 from dotenv import load_dotenv
 from types import FunctionType
 from functools import wraps
-from src.utils import logger
-from src.exceptions import (
-    RateLimitExceededError,
-    ServerRequestError,
-    ClientRequestError,
-    APIError,
-)
+
+try:
+    from src.utils import logger
+    from src.exceptions import (
+        RateLimitExceededError,
+        ServerRequestError,
+        ClientRequestError,
+        APIError,
+    )
+except ImportError:
+    from utils import logger
+    from exceptions import (
+        RateLimitExceededError,
+        ServerRequestError,
+        ClientRequestError,
+        APIError,
+    )
 
 # Load Enviroment Varaibles
 load_dotenv()

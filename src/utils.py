@@ -3,9 +3,12 @@
 import boto3
 import json
 import logging
-from src.exceptions import BotocoreError
 from botocore.exceptions import ClientError
 
+try:
+    from src.exceptions import BotocoreError
+except ImportError:
+    from exceptions import BotocoreError
 
 logger = logging.getLogger(name="Guardian Search Content")
 logger.setLevel(logging.INFO)

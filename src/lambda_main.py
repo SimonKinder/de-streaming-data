@@ -3,19 +3,35 @@
 import boto3
 import httpx
 from botocore.exceptions import ClientError
-from src.guardian_api import get_articles, raise_on_status_error
-from src.utils import (
-    format_results,
-    update_message_retention,
-    send_queue_message,
-)
-from src.exceptions import (
-    APIError,
-    ClientRequestError,
-    ServerRequestError,
-    BotocoreError,
-    RateLimitExceededError,
-)
+
+try:
+    from src.guardian_api import get_articles, raise_on_status_error
+    from src.utils import (
+        format_results,
+        update_message_retention,
+        send_queue_message,
+    )
+    from src.exceptions import (
+        APIError,
+        ClientRequestError,
+        ServerRequestError,
+        BotocoreError,
+        RateLimitExceededError,
+    )
+except ImportError:
+    from guardian_api import get_articles, raise_on_status_error
+    from utils import (
+        format_results,
+        update_message_retention,
+        send_queue_message,
+    )
+    from exceptions import (
+        APIError,
+        ClientRequestError,
+        ServerRequestError,
+        BotocoreError,
+        RateLimitExceededError,
+    )
 
 
 def guardian_lambda(event: dict, context: dict) -> dict:
