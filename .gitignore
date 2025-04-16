@@ -16,3 +16,7 @@ wheels/
 to_do.md
 specification.md
 dependencies
+terraform/terraform.tfvars
+packages
+*tfstate*
+.terraform.lock*

@@ -27,5 +27,5 @@ docstring-code-line-length = 70
 select = ["E4", "E7", "E9", "F", "B"]
 
 [tool.pytest.ini_options]
-addopts = "--testdox --cov-report term-missing --cov=src/"
+addopts = "tests/ --testdox --cov-report term-missing --cov=src/"
 filterwarnings = ["ignore::DeprecationWarning"]
