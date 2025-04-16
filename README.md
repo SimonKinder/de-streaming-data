@@ -54,6 +54,59 @@ echo "GUARDIAN_API_KEY=insert-api-key" >> .env
 
 ```bash
 uv run python run_guardian.py --query "query" --queue-url "sqs_queue_url" --from-date "YYYY-MM-DD"
+
+```
+
+## Deployment
+
+### Prerequisites
+
+- Terraform installed
+- AWS CLI configured with appropriate credentials
+- Guardian API key
+
+### Steps
+
+1. Configure AWS credentials:
+
+```bash
+aws configure
+```
+
+2. Navigate to the terraform directory:
+
+```bash
+cd terraform
+```
+
+3. Create a `terraform.tfvars` file:
+
+```bash
+echo 'guardian_api_key = "your-api-key"' > terraform.tfvars
+```
+
+4. Initialize and apply Terraform:
+
+```bash
+terraform init
+terraform plan
+terraform apply
+```
+
+### Infrastructure
+
+The Terraform configuration creates:
+
+- Lambda function with necessary IAM roles
+- Lambda layer with required dependencies
+- Environment variables for the Lambda function
+
+### Cleanup
+
+To remove all resources:
+
+```bash
+terraform destroy
 ```
 
 ## Project Structure
